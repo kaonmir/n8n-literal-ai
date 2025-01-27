@@ -20,10 +20,13 @@
 		"sourceMap": true,
 		"skipLibCheck": true,
 		"outDir": "./dist/",
-		"paths": {
-			"@utils/*": ["./utils/*"]
-		},
-		"baseUrl": "."
 	},
-	"include": ["credentials/**/*", "nodes/**/*", "utils/**/*.ts", "nodes/**/*.json", "types/*.ts"]
+	"tsc-alias": {
+		"replacers": {
+			"base-url": {
+				"enabled": false
+			}
+		}
+	},
+	"include": ["credentials/**/*", "nodes/**/*", "nodes/**/*.json", "types/*.ts"]
 }
