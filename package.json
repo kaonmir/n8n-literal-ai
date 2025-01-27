@@ -40,7 +40,7 @@
 			"dist/credentials/LiteralAiCredentialsApi.credentials.js"
 		],
 		"nodes": [
-			"dist/nodes/LiteralAi/LiteralAi.node.js"
+			"dist/nodes/chains/LiteralAiBasicLLM/LiteralAiBasicLLM.node.js"
 		]
 	},
 	"devDependencies": {
@@ -56,6 +56,12 @@
 		"n8n-workflow": "*"
 	},
 	"dependencies": {
-		"@literalai/client": "^0.1.5"
+		"@langchain/core": "^0.3.36",
+		"@langchain/google-genai": "^0.1.6",
+		"@langchain/ollama": "^0.1.5",
+		"@literalai/client": "^0.1.5",
+		"langchain": "^0.3.13",
+		"messages": "link:@langchain/core/messages",
+		"openai": "^4.80.1"
 	}
 }

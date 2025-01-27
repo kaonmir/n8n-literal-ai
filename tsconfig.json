@@ -19,7 +19,11 @@
 		"declaration": true,
 		"sourceMap": true,
 		"skipLibCheck": true,
-		"outDir": "./dist/"
+		"outDir": "./dist/",
+		"paths": {
+			"@utils/*": ["./utils/*"]
+		},
+		"baseUrl": "."
 	},
-	"include": ["credentials/**/*", "nodes/**/*", "nodes/**/*.json", "package.json"]
+	"include": ["credentials/**/*", "nodes/**/*", "utils/**/*.ts", "nodes/**/*.json", "types/*.ts"]
 }

@@ -1,0 +1,18 @@
+{
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true,
+		"**/node_modules": true,
+		"**/dist": true,
+		"**/package-lock.json": true,
+		"**/pnpm-lock.yaml": true,
+		"**/CODE_OF_CONDUCT.md": true,
+		"**/CONTRIBUTING.md": true,
+		"**/LICENSE": true,
+		"**/SECURITY.md": true
+	}
+}
