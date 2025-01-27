@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-literalai",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "Literal AI is a platform that allows you to create and manage your own AI models.",
 	"keywords": [
 		"n8n-community-node-package"
