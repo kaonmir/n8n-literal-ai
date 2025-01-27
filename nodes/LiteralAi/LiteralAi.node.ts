@@ -62,13 +62,13 @@ export class LiteralAi implements INodeType {
 		});
 
     const prompt = await client.api.getPrompt('extract_article_wisdom') as Prompt | null
+    this.logger.info("--------------------------------\n")
+    this.logger.info("helllllllo--------------------------------")
     if (prompt) {
-      this.logger.info("--------------------------------")
       this.logger.info(JSON.stringify(prompt.templateMessages))
       this.logger.info(credentials.apiKey.toString())
       this.logger.info("--------------------------------")
     } else {
-      this.logger.info("--------------------------------")
       this.logger.info("No prompt found")
       this.logger.info("--------------------------------")
     }
