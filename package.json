@@ -56,6 +56,6 @@
 		"n8n-workflow": "*"
 	},
 	"dependencies": {
-		"@literalai/client": "^0.1.5"
+		"@literalai/client": "^1.0.0"
 	}
 }

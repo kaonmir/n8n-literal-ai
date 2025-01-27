@@ -11,8 +11,8 @@ export class LiteralAiCredentialsApi implements ICredentialType {
 	documentationUrl = 'https://docs.literal.ai/';
 	properties: INodeProperties[] = [
 		{
-			displayName: 'Base URL',
-			name: 'baseUrl',
+			displayName: 'API URL',
+			name: 'apiUrl',
 			type: 'string',
 			default: '',
 			placeholder: 'https://api.literal.ai',
@@ -60,8 +60,7 @@ export class LiteralAiCredentialsApi implements ICredentialType {
 	// The block below tells how this credential can be tested
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: '={{ $credentials.baseUrl }}',
-			url: '',
+			url: '={{ $credentials.apiUrl }}',
 			headers: {
 				'Authorization': '=Bearer {{ $credentials.apiKey }}',
 			},

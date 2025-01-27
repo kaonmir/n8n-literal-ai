@@ -4,6 +4,8 @@ import {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
+import { LiteralClient } from "@literalai/client";
+import { promptOperations, promptFields } from './PromptDescription';
 
 export class LiteralAi implements INodeType {
 	description: INodeTypeDescription = {
@@ -12,13 +14,13 @@ export class LiteralAi implements INodeType {
 		// icon: 'file:literalai.svg',
 		group: ['transform'],
 		version: 1,
-		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		description: 'Literal AI API를 사용합니다',
+		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		defaults: {
 			name: 'Literal AI',
 		},
-		inputs: ['main'],
-		outputs: ['main'],
+    inputs: ['main'],
+    outputs: ['main'],
 		credentials: [
 			{
 				name: 'literalAiCredentialsApi',
@@ -33,166 +35,33 @@ export class LiteralAi implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Chat',
-						value: 'chat',
-					},
-					{
-						name: 'Document',
-						value: 'document',
+						name: 'Prompt',
+						value: 'prompt',
 					},
 				],
-				default: 'chat',
+				default: 'prompt',
 			},
-			{
-				displayName: 'Operation',
-				name: 'operation',
-				type: 'options',
-				noDataExpression: true,
-				displayOptions: {
-					show: {
-						resource: ['chat'],
-					},
-				},
-				options: [
-					{
-						name: 'Create',
-						value: 'create',
-						description: '새로운 채팅 세션을 생성합니다',
-						action: 'Create a new chat session',
-					},
-					{
-						name: 'Send Message',
-						value: 'sendMessage',
-						description: '메시지를 전송합니다',
-						action: 'Send a message',
-					},
-				],
-				default: 'create',
-			},
-			{
-				displayName: 'Operation',
-				name: 'operation',
-				type: 'options',
-				noDataExpression: true,
-				displayOptions: {
-					show: {
-						resource: ['document'],
-					},
-				},
-				options: [
-					{
-						name: 'Upload',
-						value: 'upload',
-						description: '문서를 업로드합니다',
-						action: 'Upload a document',
-					},
-					{
-						name: 'List',
-						value: 'list',
-						description: '문서 목록을 조회합니다',
-						action: 'List documents',
-					},
-				],
-				default: 'upload',
-			},
-			{
-				displayName: 'Message',
-				name: 'message',
-				type: 'string',
-				required: true,
-				displayOptions: {
-					show: {
-						operation: ['sendMessage'],
-						resource: ['chat'],
-					},
-				},
-				default: '',
-				description: '전송할 메시지',
-			},
-			{
-				displayName: 'Binary Property',
-				name: 'binaryPropertyName',
-				type: 'string',
-				required: true,
-				displayOptions: {
-					show: {
-						operation: ['upload'],
-						resource: ['document'],
-					},
-				},
-				default: 'data',
-				description: '업로드할 파일이 포함된 바이너리 속성',
-			},
+			...promptOperations,
+			...promptFields,
 		],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
-		const resource = this.getNodeParameter('resource', 0) as string;
-		const operation = this.getNodeParameter('operation', 0) as string;
 		const credentials = await this.getCredentials('literalAiCredentialsApi');
 
-    const baseUrl = credentials.baseUrl as string;  
-    const apiKey = credentials.apiKey as string;
+		const client = new LiteralClient({
+			apiKey: credentials.apiKey as string,
+			apiUrl: credentials.apiUrl as string,
+		});
+
+    const prompt = await client.api.getPrompt('extract_article_wisdom')
+    this.logger.info(prompt)
+
 		for (let i = 0; i < items.length; i++) {
 			try {
-				if (resource === 'chat') {
-					if (operation === 'create') {
-						this.logger.info('채팅 세션 생성 요청:', {
-							method: 'POST',
-							url: '/chat/sessions',
-							baseURL: baseUrl
-						});
-
-						returnData.push({
-							json: { success: true }
-						});
-					}
-
-					if (operation === 'sendMessage') {
-						const message = this.getNodeParameter('message', i) as string;
-						
-						this.logger.info('메시지 전송 요청:', {
-							method: 'POST', 
-							url: '/chat/messages',
-							baseURL: baseUrl,
-							message
-						});
-
-						returnData.push({
-							json: { success: true }
-						});
-					}
-				}
-
-				if (resource === 'document') {
-					if (operation === 'upload') {
-						const binaryPropertyName = this.getNodeParameter('binaryPropertyName', i) as string;
-						const binaryData = this.helpers.assertBinaryData(i, binaryPropertyName);
-
-						this.logger.info('문서 업로드 요청:', {
-							method: 'POST',
-							url: '/documents',
-							fileName: binaryData.fileName
-						});
-
-						returnData.push({
-							json: { success: true }
-						});
-					}
-
-					if (operation === 'list') {
-						this.logger.info('문서 목록 조회 요청:', {
-							method: 'GET',
-							url: '/documents'
-						});
-
-						returnData.push({
-							json: { success: true }
-						});
-					}
-				}
+				// ... 여기에 새로운 로직을 구현할 예정입니다 ...
 			} catch (error) {
 				if (this.continueOnFail()) {
 					returnData.push({ json: { error: error.message } });
