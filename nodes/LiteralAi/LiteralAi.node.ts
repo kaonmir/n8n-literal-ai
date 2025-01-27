@@ -5,7 +5,7 @@ import {
 	INodeTypeDescription,
   NodeOperationError,
 } from 'n8n-workflow';
-import { LiteralClient } from "@literalai/client";
+import { LiteralClient, Prompt } from "@literalai/client";
 import { promptOperations, promptFields } from './PromptDescription';
 
 export class LiteralAi implements INodeType {
@@ -61,15 +61,22 @@ export class LiteralAi implements INodeType {
 			apiUrl: credentials.apiUrl as string,
 		});
 
-    const prompt = await client.api.getPrompt('extract_article_wisdom')
-    this.logger.info("--------------------------------")
-    this.logger.info(JSON.stringify(prompt))
-    this.logger.info(credentials.apiKey.toString())
-    this.logger.info("--------------------------------")
+    const prompt = await client.api.getPrompt('extract_article_wisdom') as Prompt | null
+    if (prompt) {
+      this.logger.info("--------------------------------")
+      this.logger.info(JSON.stringify(prompt.templateMessages))
+      this.logger.info(credentials.apiKey.toString())
+      this.logger.info("--------------------------------")
+    } else {
+      this.logger.info("--------------------------------")
+      this.logger.info("No prompt found")
+      this.logger.info("--------------------------------")
+    }
+
 		for (let i = 0; i < items.length; i++) {
 			try {
 
-				const operation = this.getNodeParameter('operation', i) as string;
+				// const operation = this.getNodeParameter('operation', i) as string;
 				// const model = this.getNodeParameter('model', i) as string;
 				// const systemPrompt = this.getNodeParameter('system_prompt', i, '') as string;
 				// const message = this.getNodeParameter('message', i) as string;
