@@ -14,8 +14,8 @@ export class LiteralAiCredentialsApi implements ICredentialType {
 			displayName: 'API URL',
 			name: 'apiUrl',
 			type: 'string',
-			default: '',
-			placeholder: 'https://api.literal.ai',
+			default: 'https://cloud.getliteral.ai',
+			placeholder: 'https://docs.literalai.com',
 			required: true,
 		},
 		{
@@ -27,21 +27,6 @@ export class LiteralAiCredentialsApi implements ICredentialType {
 			},
 			default: '',
 			required: true,
-		},
-		{
-			displayName: 'User Name',
-			name: 'username',
-			type: 'string',
-			default: '',
-		},
-		{
-			displayName: 'Password',
-			name: 'password',
-			type: 'string',
-			typeOptions: {
-				password: true,
-			},
-			default: '',
 		},
 	];
 
