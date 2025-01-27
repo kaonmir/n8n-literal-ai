@@ -3,6 +3,7 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+  NodeOperationError,
 } from 'n8n-workflow';
 import { LiteralClient } from "@literalai/client";
 import { promptOperations, promptFields } from './PromptDescription';
@@ -49,8 +50,12 @@ export class LiteralAi implements INodeType {
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
-		const credentials = await this.getCredentials('literalAiCredentialsApi');
 
+		const credentials = await this.getCredentials('literalAiCredentialsApi');
+		if (!credentials?.apiKey) {
+			throw new NodeOperationError(this.getNode(), 'No valid API key provided');
+		}
+    
 		const client = new LiteralClient({
 			apiKey: credentials.apiKey as string,
 			apiUrl: credentials.apiUrl as string,
