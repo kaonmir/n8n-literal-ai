@@ -25,7 +25,7 @@ export class LiteralAiChat implements INodeType {
 		description: 'Literal AI API를 사용합니다',
 		subtitle: '={{$parameter["prompt"]}}',
 		defaults: {
-			name: 'Literal AI',
+			name: 'Literal AI Chat',
 		},
 		// eslint-disable-next-line n8n-nodes-base/node-class-description-inputs-wrong-regular-node
 		inputs: [NodeConnectionType.Main],
@@ -202,11 +202,6 @@ export class LiteralAiChat implements INodeType {
 				type: 'boolean',
 				default: false,
 				noDataExpression: true,
-				displayOptions: {
-					hide: {
-						'@version': [1],
-					},
-				},
 			},
 			{
 				displayName: `Connect an <a data-action='openSelectiveNodeCreator' data-action-parameter-connectiontype='${NodeConnectionType.AiOutputParser}'>output parser</a> on the canvas to specify the output format you require`,
