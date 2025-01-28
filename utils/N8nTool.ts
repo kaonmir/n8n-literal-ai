@@ -70,7 +70,7 @@ export class N8nTool extends DynamicStructuredTool {
 				try {
 					// First we try to parse a JSON with more relaxed rules
 					dataFromModel = jsonParse<IDataObject>(query, { acceptJSObject: true });
-				} catch (error: any) {
+				} catch (error) {
 					// In case of error,
 					// If model supplied a simple string instead of an object AND only one parameter expected, we try to recover the object structure
 					if (Object.keys(schema.shape).length === 1) {
@@ -95,7 +95,7 @@ export class N8nTool extends DynamicStructuredTool {
 				const result = await func(parsedQuery);
 
 				return result;
-			} catch (e: any) {
+			} catch (e) {
 				const { index } = context.addInputData(NodeConnectionType.AiTool, [[{ json: { query } }]]);
 				void context.addOutputData(NodeConnectionType.AiTool, index, e);
 

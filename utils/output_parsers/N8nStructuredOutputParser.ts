@@ -48,7 +48,7 @@ export class N8nStructuredOutputParser extends StructuredOutputParser<
 			]);
 
 			return result;
-		} catch (e: any) {
+		} catch (e) {
 			const nodeError = new NodeOperationError(
 				this.context.getNode(),
 				"Model output doesn't fit required format",

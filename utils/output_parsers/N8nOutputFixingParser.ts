@@ -68,7 +68,7 @@ export class N8nOutputFixingParser extends BaseOutputParser {
 				]);
 
 				return parsed;
-			} catch (autoParseError: any) {
+			} catch (autoParseError) {
 				// If both attempts fail, add the error to the output and throw
 				this.context.addOutputData(NodeConnectionType.AiOutputParser, index, autoParseError);
 				throw autoParseError;

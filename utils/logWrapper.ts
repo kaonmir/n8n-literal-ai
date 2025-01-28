@@ -34,7 +34,7 @@ export async function callMethodAsync<T>(
 ): Promise<unknown> {
 	try {
 		return await parameters.method.call(this, ...parameters.arguments);
-	} catch (e: any) {
+	} catch (e) {
 		const connectedNode = parameters.executeFunctions.getNode();
 
 		const error = new NodeOperationError(connectedNode, e, {
@@ -74,7 +74,7 @@ export function callMethodSync<T>(
 ): unknown {
 	try {
 		return parameters.method.call(this, ...parameters.arguments);
-	} catch (e: any) {
+	} catch (e) {
 		const connectedNode = parameters.executeFunctions.getNode();
 		const error = new NodeOperationError(connectedNode, e);
 		parameters.executeFunctions.addOutputData(
@@ -394,7 +394,7 @@ export function logWrapper(
 					return async (
 						query: string,
 						k?: number,
-						filter?: any,
+						filter?: BiquadFilterType | undefined,
 						_callbacks?: Callbacks | undefined,
 					): Promise<Document[]> => {
 						connectionType = NodeConnectionType.AiVectorStore;
@@ -418,7 +418,6 @@ export function logWrapper(
 				}
 			}
 
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 			return (target as any)[prop];
 		},
 	});
