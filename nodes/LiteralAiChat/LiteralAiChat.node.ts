@@ -194,6 +194,31 @@ export class LiteralAiChat implements INodeType {
 					},
 				],
 			},
+
+			// TODO
+			{
+				displayName: 'Require Specific Output Format',
+				name: 'hasOutputParser',
+				type: 'boolean',
+				default: false,
+				noDataExpression: true,
+				displayOptions: {
+					hide: {
+						'@version': [1],
+					},
+				},
+			},
+			{
+				displayName: `Connect an <a data-action='openSelectiveNodeCreator' data-action-parameter-connectiontype='${NodeConnectionType.AiOutputParser}'>output parser</a> on the canvas to specify the output format you require`,
+				name: 'notice',
+				type: 'notice',
+				default: '',
+				displayOptions: {
+					show: {
+						hasOutputParser: [true],
+					},
+				},
+			},
 		],
 	};
 
