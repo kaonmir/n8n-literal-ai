@@ -40,7 +40,8 @@
 			"dist/credentials/LiteralAiCredentialsApi.credentials.js"
 		],
 		"nodes": [
-			"dist/nodes/chains/LiteralAiBasicLLM/LiteralAiBasicLlm.node.js"
+			"dist/nodes/LiteralAi/LiteralAi.node.js",
+			"dist/nodes/LiteralAiChat/LiteralAiChat.node.js"
 		]
 	},
 	"devDependencies": {
