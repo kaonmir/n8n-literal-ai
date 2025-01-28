@@ -3,6 +3,8 @@
 		"strict": true,
 		"module": "commonjs",
 		"moduleResolution": "node",
+		// "target": "es2021",
+		// "lib": ["es2021", "es2022.error", "dom"],
 		"target": "es2019",
 		"lib": ["es2019", "es2020", "es2022.error"],
 		"removeComments": true,
@@ -19,7 +21,7 @@
 		"declaration": true,
 		"sourceMap": true,
 		"skipLibCheck": true,
-		"outDir": "./dist/",
+		"outDir": "./dist/"
 	},
 	"tsc-alias": {
 		"replacers": {
@@ -28,5 +30,8 @@
 			}
 		}
 	},
-	"include": ["credentials/**/*", "nodes/**/*", "nodes/**/*.json", "types/*.ts"]
+	"paths": {
+		"@utils/*": ["./utils/*"]
+	},
+	"include": ["credentials/**/*", "nodes/**/*", "utils/**/*.ts", "nodes/**/*.json", "types/*.ts"]
 }

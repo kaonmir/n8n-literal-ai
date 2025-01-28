@@ -1,5 +1,5 @@
 {
-	"name": "n8n-nodes-literalai",
+	"name": "n8n-nodes-literal-ai",
 	"version": "0.1.8",
 	"description": "Literal AI is a platform that allows you to create and manage your own AI models.",
 	"keywords": [
@@ -14,7 +14,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/kaonmir/n8n-nodes-literalai.git"
+		"url": "https://github.com/kaonmir/n8n-nodes-literal-ai.git"
 	},
 	"engines": {
 		"node": ">=18.10",
