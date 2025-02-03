@@ -377,6 +377,8 @@ export class LiteralAiChat implements INodeType {
 					return completion.choices[0].message;
 				});
 
+				console.log(result);
+
 				returnData.push({
 					json: {
 						content: result.content,
