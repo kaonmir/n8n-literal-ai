@@ -8,11 +8,12 @@
 		// "target": "es2019",
 		// "lib": ["es2019", "es2020", "es2022.error"],
 		"removeComments": true,
-		"useUnknownInCatchVariables": false,
+		"useUnknownInCatchVariables": true,
 		"forceConsistentCasingInFileNames": true,
 		"noImplicitAny": true,
 		"noImplicitReturns": true,
 		"noUnusedLocals": true,
+		"noUnusedParameters": true,
 		"strictNullChecks": true,
 		"preserveConstEnums": true,
 		"esModuleInterop": true,
@@ -21,7 +22,7 @@
 		"declaration": true,
 		"sourceMap": true,
 		"skipLibCheck": true,
-		"outDir": "./dist/"
+		"outDir": "dist"
 	},
 	"tsc-alias": {
 		"replacers": {
@@ -33,5 +34,13 @@
 	"paths": {
 		"@utils/*": ["./utils/*"]
 	},
-	"include": ["credentials/**/*", "nodes/**/*", "utils/**/*.ts", "nodes/**/*.json", "types/*.ts"]
+	"include": [
+		"credentials/**/*",
+		"nodes/**/*",
+		"utils/**/*.ts",
+		"nodes/**/*.json",
+		"types/*.ts",
+		"package.json"
+	],
+	"exclude": ["node_modules/**/*", "dist/**/*"]
 }
