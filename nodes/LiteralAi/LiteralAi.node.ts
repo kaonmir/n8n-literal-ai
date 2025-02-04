@@ -420,7 +420,7 @@ export class LiteralAi implements INodeType {
 						content: responseData,
 					},
 				});
-			} catch (error) {
+			} catch (error: any) {
 				if (this.continueOnFail()) {
 					returnData.push({ json: { error: error.message } });
 					continue;
