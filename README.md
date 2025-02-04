@@ -1,4 +1,4 @@
-# n8n-nodes-literal-ai
+# n8n-nodes-literalai
 
 This is an n8n community node. It lets you use Literal AI in your n8n workflows.
 
