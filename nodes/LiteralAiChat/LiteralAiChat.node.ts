@@ -1,17 +1,11 @@
 import {
 	IExecuteFunctions,
-	ILoadOptionsFunctions,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
 	NodeConnectionType,
 	NodeOperationError,
 } from 'n8n-workflow';
-import {
-	AIMessagePromptTemplate,
-	SystemMessagePromptTemplate,
-	HumanMessagePromptTemplate,
-} from '@langchain/core/prompts';
 import { LiteralClient, Prompt } from '@literalai/client';
 import OpenAI from 'openai';
 
@@ -28,7 +22,13 @@ export class LiteralAiChat implements INodeType {
 			name: 'Literal AI Chat',
 		},
 		// eslint-disable-next-line n8n-nodes-base/node-class-description-inputs-wrong-regular-node
-		inputs: [NodeConnectionType.Main],
+		inputs: [
+			{ displayName: '', type: NodeConnectionType.Main },
+			{
+				displayName: 'Tool',
+				type: NodeConnectionType.AiTool,
+			},
+		],
 		// eslint-disable-next-line n8n-nodes-base/node-class-description-outputs-wrong
 		outputs: [NodeConnectionType.Main],
 		credentials: [
@@ -46,6 +46,8 @@ export class LiteralAiChat implements INodeType {
 				description: '프롬프트 이름을 입력하세요',
 				required: true,
 			},
+
+			// TODO Json 형식 말고 Key value 형식으로 변경
 			{
 				displayName: 'Variables',
 				name: 'variables',
@@ -54,189 +56,16 @@ export class LiteralAiChat implements INodeType {
 				required: true,
 			},
 			{
-				displayName: 'Chat Messages (if Using a Chat Model)',
-				name: 'messages',
-				type: 'fixedCollection',
-				typeOptions: {
-					multipleValues: true,
-				},
-				default: {},
-				placeholder: 'Add prompt',
-				options: [
-					{
-						name: 'messageValues',
-						displayName: 'Prompt',
-						values: [
-							{
-								displayName: 'Type Name or ID',
-								name: 'type',
-								type: 'options',
-								options: [
-									{
-										name: 'AI',
-										value: AIMessagePromptTemplate.lc_name(),
-									},
-									{
-										name: 'System',
-										value: SystemMessagePromptTemplate.lc_name(),
-									},
-									{
-										name: 'User',
-										value: HumanMessagePromptTemplate.lc_name(),
-									},
-								],
-								// eslint-disable-next-line n8n-nodes-base/node-param-default-wrong-for-options
-								default: SystemMessagePromptTemplate.lc_name(),
-							},
-							{
-								displayName: 'Message Type',
-								name: 'messageType',
-								type: 'options',
-								displayOptions: {
-									show: {
-										type: [HumanMessagePromptTemplate.lc_name()],
-									},
-								},
-								options: [
-									{
-										name: 'Text',
-										value: 'text',
-										description: 'Simple text message',
-									},
-									{
-										name: 'Image (Binary)',
-										value: 'imageBinary',
-										description: 'Process the binary input from the previous node',
-									},
-									{
-										name: 'Image (URL)',
-										value: 'imageUrl',
-										description: 'Process the image from the specified URL',
-									},
-								],
-								default: 'text',
-							},
-							{
-								displayName: 'Image Data Field Name',
-								name: 'binaryImageDataKey',
-								type: 'string',
-								default: 'data',
-								required: true,
-								description:
-									"The name of the field in the chain's input that contains the binary image file to be processed",
-								displayOptions: {
-									show: {
-										messageType: ['imageBinary'],
-									},
-								},
-							},
-							{
-								displayName: 'Image URL',
-								name: 'imageUrl',
-								type: 'string',
-								default: '',
-								required: true,
-								description: 'URL to the image to be processed',
-								displayOptions: {
-									show: {
-										messageType: ['imageUrl'],
-									},
-								},
-							},
-							{
-								displayName: 'Image Details',
-								description:
-									'Control how the model processes the image and generates its textual understanding',
-								name: 'imageDetail',
-								type: 'options',
-								displayOptions: {
-									show: {
-										type: [HumanMessagePromptTemplate.lc_name()],
-										messageType: ['imageBinary', 'imageUrl'],
-									},
-								},
-								options: [
-									{
-										name: 'Auto',
-										value: 'auto',
-										description:
-											'Model will use the auto setting which will look at the image input size and decide if it should use the low or high setting',
-									},
-									{
-										name: 'Low',
-										value: 'low',
-										description:
-											'The model will receive a low-res 512px x 512px version of the image, and represent the image with a budget of 65 tokens. This allows the API to return faster responses and consume fewer input tokens for use cases that do not require high detail.',
-									},
-									{
-										name: 'High',
-										value: 'high',
-										description:
-											'Allows the model to see the low res image and then creates detailed crops of input images as 512px squares based on the input image size. Each of the detailed crops uses twice the token budget (65 tokens) for a total of 129 tokens.',
-									},
-								],
-								default: 'auto',
-							},
-
-							{
-								displayName: 'Message',
-								name: 'message',
-								type: 'string',
-								required: true,
-								displayOptions: {
-									hide: {
-										messageType: ['imageBinary', 'imageUrl'],
-									},
-								},
-								default: '',
-							},
-						],
-					},
-				],
-			},
-
-			// TODO
-			{
-				displayName: 'Require Specific Output Format',
-				name: 'hasOutputParser',
-				type: 'boolean',
-				default: false,
-				noDataExpression: true,
-			},
-			{
-				displayName: `Connect an <a data-action='openSelectiveNodeCreator' data-action-parameter-connectiontype='${NodeConnectionType.AiOutputParser}'>output parser</a> on the canvas to specify the output format you require`,
+				displayName:
+					'Notice: Tools defined in Literal AI will be ignored. Please connect tools directly.',
 				name: 'notice',
 				type: 'notice',
 				default: '',
-				displayOptions: {
-					show: {
-						hasOutputParser: [true],
-					},
-				},
 			},
 		],
 	};
 
-	methods = {
-		loadOptions: {
-			async getVariables(this: ILoadOptionsFunctions) {
-				const credentials = await this.getCredentials('literalAiCredentialsApi');
-				if (!credentials?.literalAiApiKey) {
-					throw new NodeOperationError(this.getNode(), 'No valid API key provided');
-				}
-
-				const client = new LiteralClient({
-					apiUrl: credentials.literalAiBaseUrl as string,
-					apiKey: credentials.literalAiApiKey as string,
-				});
-
-				const prompts = await client.api.getPrompt(this.getNodeParameter('prompt') as string);
-
-				this.logger.info(JSON.stringify(prompts.variables));
-				return prompts.variables;
-			},
-		},
-	};
+	methods = {};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
@@ -270,11 +99,39 @@ export class LiteralAiChat implements INodeType {
 						throw new NodeOperationError(this.getNode(), 'Prompt not found');
 					}
 
+					// ?
+					console.log({
+						id: prompt.id,
+						type: prompt.type,
+						createdAt: prompt.createdAt,
+						name: prompt.name,
+						version: prompt.version,
+						url: prompt.url,
+						versionDesc: prompt.versionDesc,
+						metadata: prompt.metadata,
+						items: prompt.items,
+						variablesDefaultValues: prompt.variablesDefaultValues,
+						templateMessages: prompt.templateMessages,
+						tools: prompt.tools,
+						provider: prompt.provider,
+						settings: {
+							...prompt.settings,
+							response_format: {
+								// @ts-ignore
+								type: prompt.settings.response_format.type,
+								// @ts-ignore
+								json_schema: JSON.stringify(prompt.settings.response_format.json_schema),
+								hello: 'world',
+							},
+						},
+						variables: prompt.variables,
+					});
+
 					for (const variable of prompt.variables) {
 						if (!(variable.name in variablesParameter)) {
 							throw new NodeOperationError(
 								this.getNode(),
-								`Required variable "${variable.name}" is missing. Required variables: ${prompt.variables.map((v) => v.name).join(', ')}`,
+								`Required variables are missing: ${prompt.variables.map((v) => v.name).join(', ')}`,
 							);
 						}
 					}
@@ -284,100 +141,14 @@ export class LiteralAiChat implements INodeType {
 					}
 
 					//! Run Phase
-					// Get chat messages if they exist
-					const chatMessages = this.getNodeParameter('messages.messageValues', i, []) as Array<{
-						type: string;
-						message: string;
-						messageType: 'text' | 'imageBinary' | 'imageUrl';
-						binaryImageDataKey?: string;
-						imageUrl?: string;
-						imageDetail?: 'auto' | 'low' | 'high';
-					}>;
-
-					// Format messages for OpenAI chat completion
-					const formattedChatMessages = chatMessages.map((msg) => {
-						let role: 'system' | 'assistant' | 'user';
-						switch (msg.type) {
-							case SystemMessagePromptTemplate.lc_name():
-								role = 'system';
-								break;
-							case AIMessagePromptTemplate.lc_name():
-								role = 'assistant';
-								break;
-							case HumanMessagePromptTemplate.lc_name():
-								role = 'user';
-								break;
-							default:
-								throw new NodeOperationError(this.getNode(), `Invalid message type: ${msg.type}`);
-						}
-
-						// Handle different message types
-						if (msg.messageType === 'text' || role !== 'user') {
-							return {
-								role,
-								content: msg.message,
-							};
-						} else {
-							// Handle image messages (only for user role)
-							const content: Array<
-								| {
-										type: 'text';
-										text: string;
-								  }
-								| {
-										type: 'image_url';
-										image_url: {
-											url: string;
-											detail?: 'low' | 'high';
-										};
-								  }
-							> = [];
-
-							if (msg.message) {
-								content.push({ type: 'text', text: msg.message });
-							}
-
-							if (msg.messageType === 'imageUrl' && msg.imageUrl) {
-								content.push({
-									type: 'image_url',
-									image_url: {
-										url: msg.imageUrl,
-										detail: msg.imageDetail === 'auto' ? undefined : msg.imageDetail,
-									},
-								});
-							} else if (msg.messageType === 'imageBinary' && msg.binaryImageDataKey) {
-								const binaryData = items[i].binary?.[msg.binaryImageDataKey];
-								if (!binaryData) {
-									throw new NodeOperationError(this.getNode(), 'No binary data found');
-								}
-								const dataUrl = `data:${binaryData.mimeType};base64,${binaryData.data}`;
-								content.push({
-									type: 'image_url',
-									image_url: {
-										url: dataUrl,
-										detail: msg.imageDetail === 'auto' ? undefined : msg.imageDetail,
-									},
-								});
-							}
-
-							return {
-								role,
-								content,
-							};
-						}
-					});
-
-					// Combine prompt messages with chat messages
 					const promptMessages = prompt.formatMessages(variablesParameter);
 					const completion = await openai.chat.completions.create({
-						messages: [...promptMessages, ...formattedChatMessages],
+						messages: [...promptMessages],
 						...prompt.settings,
 					});
 
 					return completion.choices[0].message;
 				});
-
-				console.log(result);
 
 				returnData.push({
 					json: {
