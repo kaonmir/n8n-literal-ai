@@ -121,11 +121,14 @@ export class LiteralAiChat implements INodeType {
 						variables: Array<{ key: string; value: string }>;
 					};
 
+					console.log(variablesInput);
+
 					// Convert variables to object
-					const variablesParameter = variablesInput.variables.reduce(
-						(acc, { key, value }) => ({ ...acc, [key]: value }),
-						{},
-					);
+					const variablesParameter =
+						variablesInput.variables?.reduce(
+							(acc, { key, value }) => ({ ...acc, [key]: value }),
+							{},
+						) || {};
 
 					const promptName = this.getNodeParameter('prompt', i) as string;
 
