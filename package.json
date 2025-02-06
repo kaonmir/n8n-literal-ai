@@ -105,7 +105,6 @@
 		"langchain": "0.3.11",
 		"lodash": "4.17.21",
 		"mammoth": "1.7.2",
-		"messages": "link:@langchain/core/messages",
 		"mime-types": "2.1.35",
 		"n8n-nodes-base": "*",
 		"n8n-workflow": "^1.70.0",
