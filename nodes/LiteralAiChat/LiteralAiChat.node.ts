@@ -134,7 +134,7 @@ export class LiteralAiChat implements INodeType {
 						}
 					}
 
-					if (!prompt.settings.model) {
+					if (!prompt.settings?.model) {
 						throw new NodeOperationError(this.getNode(), 'Model is not specified in prompt');
 					}
 
@@ -142,7 +142,14 @@ export class LiteralAiChat implements INodeType {
 					const promptMessages = prompt.formatMessages(variablesParameter);
 					const completion = await openai.chat.completions.create({
 						messages: [...promptMessages],
-						...prompt.settings,
+						model: prompt.settings.model,
+						...(prompt.settings?.temperature !== undefined && {
+							temperature: prompt.settings.temperature,
+						}),
+						...(prompt.settings?.max_tokens !== undefined && {
+							max_tokens: prompt.settings.max_tokens,
+						}),
+						// 필요한 다른 설정들도 같은 방식으로 추가
 					});
 
 					return completion.choices[0].message;
