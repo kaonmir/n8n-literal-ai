@@ -137,9 +137,6 @@ importers:
       mammoth:
         specifier: 1.7.2
         version: 1.7.2
-      messages:
-        specifier: link:@langchain/core/messages
-        version: link:@langchain/core/messages
       mime-types:
         specifier: 2.1.35
         version: 2.1.35
@@ -171,7 +168,7 @@ importers:
         specifier: 3.0.3
         version: 3.0.3
       zod:
-        specifier: 3.24.1
+        specifier: ^3.22.0
         version: 3.24.1
       zod-to-json-schema:
         specifier: 3.23.3
