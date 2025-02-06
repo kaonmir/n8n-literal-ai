@@ -76,6 +76,8 @@ export class LiteralAiChat implements INodeType {
 			throw new NodeOperationError(this.getNode(), 'No valid API key provided');
 		}
 
+		console.log(credentials);
+
 		const client = new LiteralClient({
 			apiKey: credentials.literalAiApiKey as string,
 			apiUrl: credentials.literalAiBaseUrl as string,
@@ -99,32 +101,6 @@ export class LiteralAiChat implements INodeType {
 						throw new NodeOperationError(this.getNode(), 'Prompt not found');
 					}
 
-					// ?
-					// console.log({
-					// 	id: prompt.id,
-					// 	type: prompt.type,
-					// 	createdAt: prompt.createdAt,
-					// 	name: prompt.name,
-					// 	version: prompt.version,
-					// 	url: prompt.url,
-					// 	versionDesc: prompt.versionDesc,
-					// 	metadata: prompt.metadata,
-					// 	items: prompt.items,
-					// 	variablesDefaultValues: prompt.variablesDefaultValues,
-					// 	templateMessages: prompt.templateMessages,
-					// 	tools: prompt.tools,
-					// 	provider: prompt.provider,
-					// 	settings: {
-					// 		...prompt.settings,
-					// 		response_format: prompt.settings?.response_format ? {
-					// 			type: prompt.settings.response_format.type,
-					// 			json_schema: prompt.settings.response_format.json_schema ?
-					// 				JSON.stringify(prompt.settings.response_format.json_schema) : undefined,
-					// 		} : undefined,
-					// 	},
-					// 	variables: prompt.variables,
-					// });
-
 					for (const variable of prompt.variables) {
 						if (!(variable.name in variablesParameter)) {
 							throw new NodeOperationError(
@@ -137,6 +113,8 @@ export class LiteralAiChat implements INodeType {
 					if (!prompt.settings?.model) {
 						throw new NodeOperationError(this.getNode(), 'Model is not specified in prompt');
 					}
+
+					console.log(prompt.settings);
 
 					//! Run Phase
 					const promptMessages = prompt.formatMessages(variablesParameter);
