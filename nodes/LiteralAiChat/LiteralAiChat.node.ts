@@ -16,7 +16,7 @@ export class LiteralAiChat implements INodeType {
 		icon: 'file:literalai.svg',
 		group: ['transform'],
 		version: 1,
-		description: 'Literal AI API를 사용합니다',
+		description: 'Use Literal AI API',
 		subtitle: '={{$parameter["prompt"]}}',
 		defaults: {
 			name: 'Literal AI Chat',
@@ -43,17 +43,42 @@ export class LiteralAiChat implements INodeType {
 				name: 'prompt',
 				type: 'string',
 				default: '',
-				description: '프롬프트 이름을 입력하세요',
+				description: 'Enter the prompt name',
 				required: true,
 			},
-
-			// TODO Json 형식 말고 Key value 형식으로 변경
 			{
 				displayName: 'Variables',
 				name: 'variables',
-				type: 'json',
-				default: '{}',
-				required: true,
+				type: 'fixedCollection',
+				typeOptions: {
+					multipleValues: true,
+				},
+				default: {},
+				options: [
+					{
+						name: 'variables',
+						displayName: 'Variable',
+						values: [
+							{
+								displayName: 'Variable Name',
+								name: 'key',
+								type: 'string',
+								default: '',
+								required: true,
+								description: 'Enter the variable name',
+							},
+							{
+								displayName: 'Value',
+								name: 'value',
+								type: 'string',
+								default: '',
+								required: true,
+								description: 'Enter the variable value',
+							},
+						],
+					},
+				],
+				description: 'Enter variables to be used in the prompt',
 			},
 			{
 				displayName:
@@ -92,7 +117,16 @@ export class LiteralAiChat implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			try {
 				const result = await client.thread({ name: this.getWorkflow().name }).wrap(async () => {
-					const variablesParameter = JSON.parse(this.getNodeParameter('variables', i) as string);
+					const variablesInput = this.getNodeParameter('variables', i) as {
+						variables: Array<{ key: string; value: string }>;
+					};
+
+					// Convert variables to object
+					const variablesParameter = variablesInput.variables.reduce(
+						(acc, { key, value }) => ({ ...acc, [key]: value }),
+						{},
+					);
+
 					const promptName = this.getNodeParameter('prompt', i) as string;
 
 					//! Validation Phase
@@ -127,7 +161,7 @@ export class LiteralAiChat implements INodeType {
 						...(prompt.settings?.max_tokens !== undefined && {
 							max_tokens: prompt.settings.max_tokens,
 						}),
-						// 필요한 다른 설정들도 같은 방식으로 추가
+						// Add other necessary settings in the same way
 					});
 
 					return completion.choices[0].message;
