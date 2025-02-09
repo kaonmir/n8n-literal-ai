@@ -172,7 +172,7 @@ export class LiteralAiChat implements INodeType {
 
 				returnData.push({
 					json: {
-						content: result.content,
+						text: result.content,
 					},
 				});
 			} catch (error: any) {
