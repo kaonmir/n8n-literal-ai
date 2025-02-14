@@ -164,7 +164,7 @@ export class LiteralAiChat implements INodeType {
 						...(prompt.settings?.max_tokens !== undefined && {
 							max_tokens: prompt.settings.max_tokens,
 						}),
-						// Add other necessary settings in the same way
+						// TODO: Add other necessary settings in the same way
 					});
 
 					return completion.choices[0].message;
